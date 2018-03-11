@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0002" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Web.FlickrSystem.Data.Interfaces\Web.FlickrSystem.Data.Interfaces.csproj" />
+    <ProjectReference Include="..\Web.FlickrSystem.Models\Web.FlickrSystem.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System">
+      <HintPath>System</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="NuGet.config">
+      <Generator>SettingsSingleFileGenerator</Generator>
+    </None>
+  </ItemGroup>
+
+</Project>

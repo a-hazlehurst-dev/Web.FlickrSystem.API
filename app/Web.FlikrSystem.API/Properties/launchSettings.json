@@ -1,0 +1,34 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": true,
+    "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "http://localhost",
+      "sslPort": 0
+    },
+    "iisExpress": {
+      "applicationUrl": "web.FlickrSystem.API",
+      "sslPort": 0
+    }
+  },
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IIS",
+      "launchBrowser": true,
+      "launchUrl": "api/values",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "use64Bit": true
+    },
+    "Web.FlikrSystem.API": {
+      "commandName": "IIS",
+      "launchBrowser": true,
+      "launchUrl": "api/v1/image/holmeschapel",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://web.FlickrSystem.API"
+    }
+  }
+}
