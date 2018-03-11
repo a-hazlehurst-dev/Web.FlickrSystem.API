@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Web.FlickrSystem.Data.Interfaces.Context;
+using Web.FlickrSystem.Data.Interfaces.Repositories;
+using Web.FlickrSystem.Data.Repositories;
 using Web.FlikrSystem.API.Filters;
 using Web.FlikrSystem.ApplicationServices.Interfaces;
 using Web.FlikrSystem.ApplicationServices.Services;
@@ -35,7 +37,9 @@ namespace Web.FlikrSystem.API
             services.AddScoped<LoggingFilter>();
             services.AddScoped<IFlickrContext, FlickrSystemContext>();
 
-            services.AddDbContext<FlickrSystemContext>(options => options.UseSqlServer(@"Server=.;Database=FlickrSystem;Trusted_Connection=True;"));
+            services.AddDbContext<FlickrSystemContext>(options => options.UseSqlServer(@"Server=ADAMLAPTOP\SQLEXPRESS;Database=FlickrSystem;User Id=FlickrSystem;password=Cr3dwalp;");
+
+            services.AddScoped<ILocationSearchCacheRepository, LocationSearchCacheRepository>();
 
         }
 

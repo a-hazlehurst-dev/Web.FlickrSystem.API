@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Web.FlickrSystem.Data.Interfaces.Context;
 using Web.FlickrSystem.Data.Interfaces.Repositories;
@@ -17,9 +18,15 @@ namespace Web.FlickrSystem.Data.Repositories
 
         public async Task Create(LocationSearchCache locationSearchCache)
         {
-             _context.LocationSearchCache.Add(locationSearchCache);
+            try
+            {
+                _context.LocationSearchCache.Add(locationSearchCache);
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
+            }catch(Exception ex)
+            {
+                var x = ex.Message;
+            }
         }
 
         public async Task<LocationSearchCache> Get(string text)

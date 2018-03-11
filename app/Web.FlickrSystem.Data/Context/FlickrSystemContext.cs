@@ -14,7 +14,14 @@ namespace Web.FlickrSystem.Data.Interfaces.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
-            modelBuilder.Entity<LocationSearchCache>().Property(x=>x.Id).HasValueGenerator
+            modelBuilder.Entity<LocationSearchCache>().ToTable("LocationSearchCache");
+
+            modelBuilder.Entity<LocationSearchCache>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).UseSqlServerIdentityColumn();
+            });
+
 
         }
 
