@@ -33,7 +33,7 @@ namespace Web.FlickrSystem.Data.Repositories
         {
             return await Task.Run(() =>
             {
-                return  _context.LocationSearchCache.SingleOrDefault(x => x.SearchText == "text");
+                return _context.LocationSearchCache.Where(x => x.SearchText == text).OrderBy(x => x.DateCreated).FirstOrDefault();
             });
         }
     }

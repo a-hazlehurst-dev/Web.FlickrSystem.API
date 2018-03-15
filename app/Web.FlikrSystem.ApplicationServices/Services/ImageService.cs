@@ -32,29 +32,38 @@ namespace Web.FlikrSystem.ApplicationServices.Services
         {
             ImageSearchResponseDTO response = new ImageSearchResponseDTO();
 
+            var localCacheCopy = await _locationSearchCacheRepository.Get(text);
+
+            if(localCacheCopy!=null && (DateTime.Now -localCacheCopy.DateCreated).Minutes < 15){
+
+                var cachedResult = JsonConvert.DeserializeObject<ImageSearchResponseDTO>(localCacheCopy.Result);
+
+                if (cachedResult.Gallery.Any())
+                {
+                    return cachedResult;
+                }
+            }
+
             var results = await GoogleGetGeoLocationsFromText(text);
        
-            if (results.Results.Any())
+            if (!results.Results.Any()) { return null; }
+
+            var images = await Search(text, tags, results.Results.First().Geometry);
+
+            var processedImages = PreProcessImages(images);
+
+            response.Gallery = (await GetGallery(processedImages)).ToList();
+
+            response.MapMarkers = GetMapMarkers(processedImages).ToList();
+
+            await _locationSearchCacheRepository.Create(new LocationSearchCache
             {
-                var images = await Search(text, tags, results.Results.First().Geometry);
+                SearchText = text,
+                Result = JsonConvert.SerializeObject(response),
+                DateCreated = DateTime.Now
+            });
 
-                var processedImages = PreProcessImages(images);
-
-                response.Gallery = (await GetGallery(processedImages)).ToList();
-
-                response.MapMarkers = GetMapMarkers(processedImages).ToList();
-
-                await _locationSearchCacheRepository.Create(new LocationSearchCache
-                {
-                    SearchText = text,
-                    Result = JsonConvert.SerializeObject(response),
-                    DateCreated = DateTime.Now
-                });
-
-                return response;
-            }
-            return null;
-            
+            return response;
        
         }
 
