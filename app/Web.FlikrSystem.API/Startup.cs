@@ -35,11 +35,11 @@ namespace Web.FlikrSystem.API
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<IConfigurationService, ConfigurationService>();
             services.AddScoped<LoggingFilter>();
-            services.AddScoped<IFlickrContext, FlickrSystemContext>();
+            var connection = @"Server=ADAMLAPTOP\SQLEXPRESS;Database=FlickrSystem;User Id=FlickrSystem;pwd=password;ConnectRetryCount=0";
+            services.AddDbContext<FlickrSystemContext>(options => options.UseSqlServer(connection));
 
-            services.AddDbContext<FlickrSystemContext>(options => options.UseSqlServer(@"Server=ADAMLAPTOP\SQLEXPRESS;Database=FlickrSystem;User Id=FlickrSystem;password=Cr3dwalp;");
-
-            services.AddScoped<ILocationSearchCacheRepository, LocationSearchCacheRepository>();
+            services.AddTransient<IFlickrContext, FlickrSystemContext>();
+            services.AddTransient<ILocationSearchCacheRepository, LocationSearchCacheRepository>();
 
         }
 
