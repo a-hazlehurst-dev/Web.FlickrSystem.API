@@ -15,8 +15,13 @@ namespace Web.FlikrSystem.ApplicationServices.Services
 
 
         public string GoogleGeoLocationSearchUrl => "https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}";
+        public string GooglePlacesAutoCompleteUrl => "https://maps.googleapis.com/maps/api/place/autocomplete/json?input={0}&types=(cities)&key={1}";
         public string GoogleApiKey => "AIzaSyCv1TJmGi-CLd18lqfY30-qM-B37KnJ7v0";
 
-       
+        public string WeatherApiKey => "2211013d1655f1cb466bf1e4630c43c5";
+
+        public string WeatherGeoCoordinateSearchUrl => "http://api.openweathermap.org/data/2.5/weather?lat={0}&lon={1}&APPID={2}";
+
+        
     }
 }

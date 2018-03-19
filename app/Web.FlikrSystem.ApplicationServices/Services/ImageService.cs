@@ -6,8 +6,10 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Web.FlickrSystem.Data.Interfaces.Repositories;
 using Web.FlickrSystem.Models.Entities;
+using Web.FlickrSystem.Models.Enum;
 using Web.FlickrSystem.Models.Flickr;
 using Web.FlickrSystem.Models.Google;
+using Web.FlickrSystem.Models.Weather;
 using Web.FlikrSystem.ApplicationServices.Interfaces;
 
 namespace Web.FlikrSystem.ApplicationServices.Services
@@ -16,14 +18,16 @@ namespace Web.FlikrSystem.ApplicationServices.Services
     {
         private readonly IConfigurationService _configurationService;
         private readonly ILocationSearchCacheRepository _locationSearchCacheRepository;
+        private readonly IApiActivityTraceRepository _activityTraceRepository;
         private List<string> WhiteList;
         private List<string> BlackList;
 
-        public ImageService(IConfigurationService configurationService, ILocationSearchCacheRepository locationSearchCacheRepository)
+        public ImageService(IConfigurationService configurationService, ILocationSearchCacheRepository locationSearchCacheRepository, IApiActivityTraceRepository activityTraceRepository)
         {
             _configurationService = configurationService;
             _locationSearchCacheRepository = locationSearchCacheRepository;
-            BlackList = new List<string> {"bushmen ","cat", "holidays","indoor","fashion","boats", "airplane", "plane", "aircraft","people","face","faces", "man", "women", "dog","cat","pensioner", "car",
+            _activityTraceRepository = activityTraceRepository;
+            BlackList = new List<string> {"bushmen ","cat", "holidays","indoor","fashion","boats", "airplane", "plane", "aircraft","people","face","faces", "man", "men", "women", "dog","cat","pensioner", "car",
                 "vehicle","vintage", "train","tourist", "painting", "sculpture","younggirld","modeling" ,"oldlady", "lady","oldwoman","bad"};
             WhiteList = new List<string> { "mountains","sunrise","landscape", "view", "river","mountain", "field", "sea","sky","forest", "trees", "wild", "creek", "waterfall","savannah", "sand", "vista","view","scenic","architecture" };
         }
@@ -48,7 +52,11 @@ namespace Web.FlikrSystem.ApplicationServices.Services
        
             if (!results.Results.Any()) { return null; }
 
-            var images = await Search(text, tags, results.Results.First().Geometry);
+            var geometry = results.Results.First().Geometry;
+
+            var images = await Search(text, tags, geometry);
+
+            response.Weather = await WeatherSearch(geometry);
 
             var processedImages = PreProcessImages(images);
 
@@ -65,6 +73,25 @@ namespace Web.FlikrSystem.ApplicationServices.Services
 
             return response;
        
+        }
+
+        private async Task<OpenWeatherMapResponseDTO> WeatherSearch(GoogleGeometry geometry)
+        {
+            HttpClient client = new HttpClient();
+
+            string url = string.Format(_configurationService.WeatherGeoCoordinateSearchUrl,geometry.Location.Lat, geometry.Location.Lng, _configurationService.WeatherApiKey);
+
+            var result = await client.GetAsync(url);
+
+            if (result.IsSuccessStatusCode)
+            {
+                var resultString = await result.Content.ReadAsStringAsync();
+
+                var openWeatherResult = JsonConvert.DeserializeObject<OpenWeatherMapResponseDTO>(resultString);
+
+                return openWeatherResult;
+            }
+            return null;
         }
 
         private IEnumerable<MapMarker> GetMapMarkers(IEnumerable<SearchImageDataResult> images)
@@ -89,7 +116,18 @@ namespace Web.FlikrSystem.ApplicationServices.Services
 
             var url = string.Format(_configurationService.GoogleGeoLocationSearchUrl, text, _configurationService.GoogleApiKey);
 
+            var then = DateTime.Now;
             var result = await client.GetAsync(url);
+            var elapsedtime = (DateTime.Now - then).Milliseconds;
+
+            await _activityTraceRepository.Create(new ApiActivityTrace
+            {
+                ActionId = ApiActionEnum.GoogleLocationSearch,
+                ProviderId = ApiProviderEnum.Google,
+                DateCreated = DateTime.Now,
+                TimeElapsedMS = elapsedtime,
+                StatusCode = result.StatusCode.ToString()
+            });
 
             if (result.IsSuccessStatusCode)
             {
@@ -160,8 +198,19 @@ namespace Web.FlikrSystem.ApplicationServices.Services
             HttpClient client = new HttpClient();
 
             string url = string.Format(_configurationService.FlickrBaseUrl + _configurationService.FlickrActionUrl + _configurationService.FlickrSearchParams, "80c8ff1a9188b72fe3dd4a66f341ef97", geoLocation.Location.Lat, geoLocation.Location.Lng, tags, "json");
-
+            var timestart = DateTime.Now;
             var result = await client.GetAsync(url);
+            var elapsedTime = (DateTime.Now - timestart).Milliseconds;
+
+            await _activityTraceRepository.Create(new ApiActivityTrace
+            {
+                ActionId = ApiActionEnum.FlickrImageSearch,
+                ProviderId = ApiProviderEnum.Flikr,
+                DateCreated = DateTime.Now,
+                StatusCode = result.StatusCode.ToString(),
+                TimeElapsedMS = elapsedTime
+
+            });
 
             if (result.IsSuccessStatusCode)
             {

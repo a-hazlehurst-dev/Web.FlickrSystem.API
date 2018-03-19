@@ -11,6 +11,8 @@ namespace Web.FlickrSystem.Data.Interfaces.Context
         }
 
 
-               public DbSet<LocationSearchCache> LocationSearchCache { get; set; }
+        public DbSet<LocationSearchCache> LocationSearchCache { get; set; }
+
+        public DbSet<ApiActivityTrace> ApiActivityTrace { get; set; }
     }
 }

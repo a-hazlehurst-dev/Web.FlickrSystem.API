@@ -15,6 +15,21 @@
     <None Update="roundhouse\up\00001_Create_Location_Search_Cache.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="roundhouse\up\00002_Create_Schema_enum.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="roundhouse\up\00003_Create_enum_ApiActionType.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="roundhouse\up\00004_Create_enum_ApiProviderType.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="roundhouse\up\00005_Create_table_ApiActivityTrace.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="roundhouse\up\00006_Populate_ApiEnums.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

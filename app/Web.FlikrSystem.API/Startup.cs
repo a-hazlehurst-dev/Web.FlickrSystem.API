@@ -33,6 +33,7 @@ namespace Web.FlikrSystem.API
             services.AddMvc();
 
             services.AddScoped<IImageService, ImageService>();
+            services.AddScoped<IPlaceService, PlaceService>();
             services.AddScoped<IConfigurationService, ConfigurationService>();
             services.AddScoped<LoggingFilter>();
             var connection = @"Server=ADAMLAPTOP\SQLEXPRESS;Database=FlickrSystem;User Id=FlickrSystem;pwd=password;ConnectRetryCount=0";
@@ -40,6 +41,7 @@ namespace Web.FlikrSystem.API
 
             services.AddTransient<IFlickrContext, FlickrSystemContext>();
             services.AddTransient<ILocationSearchCacheRepository, LocationSearchCacheRepository>();
+            services.AddTransient<IApiActivityTraceRepository, ApiActivityTraceRepository>();
 
         }
 
